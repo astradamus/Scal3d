@@ -151,3 +151,7 @@ case class Box(origin: Point3dD = Point3dD.ZERO,
   override def toString: String = "Box[" + origin + ", " + size + "]"
 
 }
+
+object Box {
+  val ZERO = Box(Point3dD.ZERO, Size3dD.ZERO)
+}
