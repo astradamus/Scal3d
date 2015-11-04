@@ -5,8 +5,7 @@ import java.awt.{Color, Image}
 import com.alexanderstrada.space3d.Box
 
 /**
- * Defines a box that can be interpreted by OrthographicFaceCollector and then drawn by
- * FaceRenderer.
+ * Defines a box that can be interpreted by SimpleOrthographic and then drawn by FaceRenderer.
  *
  * @param box The shape to be interpreted.
  * @param outline An optional color for the box's edges.
