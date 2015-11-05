@@ -19,7 +19,7 @@ case class OrthographicCamera(screen: Rectangle = Rectangle(0, 0, 1600, 900),
    */
   def project(t3dd: Tuple3dD) = Tuple3dD(t3dd.x,
                                          t3dd.y * rotationFactor,
-                                         t3dd.z * (1.0 - rotationFactor)) ** zoomFactor
+                                         t3dd.z * (1.0 - rotationFactor)) * zoomFactor
 
   /**
    * Returns the amount by which the Y origin of screen space should be displaced to compensate for

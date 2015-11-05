@@ -22,7 +22,7 @@ case class Box(origin: Point3dD = Point3dD.ZERO,
   /**
    * Returns a Point3dD representing the center of this box.
    */
-  def center: Point3dD = origin + size/2
+  def center: Point3dD = origin + (size / 2)
 
 
   /**
@@ -133,7 +133,7 @@ case class Box(origin: Point3dD = Point3dD.ZERO,
    * are closest or furthest on.
    */
   def compareTo(other: Box): Tuple3dD = {
-    
+
     def compare(axis: Axis) = {
 
       val both = Seq(other(axis.min) - this(axis.max),

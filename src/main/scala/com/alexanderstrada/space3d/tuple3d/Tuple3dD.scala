@@ -26,15 +26,10 @@ case class Tuple3dD(override val x: Double = 0,
   def *(that: Tuple3dD) = Tuple3dD(x * that.x, y * that.y, z * that.z)
   def /(that: Tuple3dD) = Tuple3dD(x / that.x, y / that.y, z / that.z)
 
-  def +(aX: Double = 0, aY: Double = 0, aZ: Double = 0) = Tuple3dD(x + aX, y + aY, z + aZ)
-  def -(sX: Double = 0, sY: Double = 0, sZ: Double = 0) = Tuple3dD(x - sX, y - sY, z - sZ)
-  def *(mX: Double = 1, mY: Double = 1, mZ: Double = 1) = Tuple3dD(x * mX, y * mY, z * mZ)
-  def /(dX: Double = 1, dY: Double = 1, dZ: Double = 1) = Tuple3dD(x / dX, y / dY, z / dZ)
-
-  def ++(a: Double) = this + Tuple3dD(a, a, a)
-  def --(s: Double) = this - Tuple3dD(s, s, s)
-  def **(m: Double) = this * Tuple3dD(m, m, m)
-  def divideAll(d: Double) = this / Tuple3dD(d, d, d)
+  def +(a: Double): Tuple3dD = this + Tuple3dD(a, a, a)
+  def -(s: Double): Tuple3dD = this - Tuple3dD(s, s, s)
+  def *(m: Double): Tuple3dD = this * Tuple3dD(m, m, m)
+  def /(d: Double): Tuple3dD = this / Tuple3dD(d, d, d)
 
 }
 
