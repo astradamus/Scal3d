@@ -29,11 +29,11 @@ object SimpleOrthographic {
   private val sortDepthZFactor = 0.1
 
 
-  def apply(camera: OrthographicCamera, zoneDrawables: Set[OrthographicDrawable]): Set[Face] = {
+  def apply(camera: OrthographicCamera, zoneDrawables: Set[BoxDrawable]): Set[Face] = {
 
     implicit def toInt(d: Double): Int = d.round.asInstanceOf[Int]
 
-    def toFaces(r: OrthographicDrawable): Set[Face] = {
+    def toFaces(r: BoxDrawable): Set[Face] = {
       val size = camera.project(r.box.size)
 
       def makeFace(worldOrigin: Point3dD,
