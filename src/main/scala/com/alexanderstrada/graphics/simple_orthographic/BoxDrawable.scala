@@ -26,5 +26,5 @@ case class BoxDrawable(box: Box = Box.ZERO,
   /**
    * Returns a copy of this BoxDrawable with its box replaced by the given one.
    */
-  override def withBox(b: Box): BoxDrawable = copy(box = b)
+  override def withBox(b: Box) = if (b != box) copy(box = b) else this
 }
