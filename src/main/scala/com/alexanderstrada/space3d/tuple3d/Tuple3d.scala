@@ -29,4 +29,8 @@ class Tuple3d[A](val x: A,
 
 object Tuple3d {
   def apply[A](x: A, y: A, z: A) = new Tuple3d(x, y, z)
+
+  def apply[A](map: Map[Axis, A], default: A) = new Tuple3d(map.getOrElse(X, default),
+                                                            map.getOrElse(Y, default),
+                                                            map.getOrElse(Z, default))
 }

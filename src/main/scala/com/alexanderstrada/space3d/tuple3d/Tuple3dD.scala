@@ -1,5 +1,6 @@
 package com.alexanderstrada.space3d.tuple3d
 
+import com.alexanderstrada.space3d.Axis._
 import com.alexanderstrada.space3d.tuple3d.Tuple3dD._
 
 case class Tuple3dD(override val x: Double = 0,
@@ -38,6 +39,10 @@ sealed trait HasZero {
 }
 
 object Tuple3dD extends HasZero {
+
+  def apply(map: Map[Axis, Double]) = new Tuple3d(map.getOrElse(X, 0.0),
+                                                  map.getOrElse(Y, 0.0),
+                                                  map.getOrElse(Z, 0.0))
 
   type Point3dD = Tuple3dD
   type Vector3dD = Tuple3dD
