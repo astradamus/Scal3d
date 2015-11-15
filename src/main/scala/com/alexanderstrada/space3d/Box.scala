@@ -118,6 +118,24 @@ case class Box(origin: Point3dD = Point3dD.ZERO,
 
 
   /**
+   * Returns a copy of this box with its origin adjusted the least possible amount that ensures it
+   * is entirely contained within the given box. If this box is larger than the given box on any
+   * axis, the copy will be centered on the given box on that axis.
+   */
+  def boundTo(other: Box): Box = {
+
+    def bind(axis: Axis, coordinate: Double) = (this, other) match {
+      case (t, o) if t.size(axis) > o.size(axis)  => other.center(axis) - (this.size(axis) / 2)
+      case (t, o) if t(axis.min) < o(axis.min)    => o(axis.min)
+      case (t, o) if t(axis.max) > o(axis.max)    => o(axis.max) - t.size(axis)
+      case _ => coordinate
+    }
+
+    copy(origin = origin map bind _)
+  }
+
+
+  /**
    * Returns a Tuple3dD in which each value is the comparison between this box and the given box on
    * that value's axis.<br><br>
    *
