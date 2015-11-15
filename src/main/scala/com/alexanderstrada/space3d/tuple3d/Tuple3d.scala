@@ -24,8 +24,6 @@ class Tuple3d[A](val x: A,
   def forall(f: (A) => Boolean): Boolean = f(x) && f(y) && f(z)
   def forall(f: (Axis, A) => Boolean): Boolean = f(X, x) && f(Y, y) && f(Z, z)
 
-  def copy(x: A = this.x, y: A = this.y, z: A = this.z) = new Tuple3d(x, y, z)
-
   def toSeq = Seq(x, y, z)
 }
 
