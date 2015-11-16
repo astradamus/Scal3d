@@ -48,10 +48,15 @@ case class Box(origin: Point3dD = Point3dD.ZERO,
 
 
   /**
-   * Returns a copy of this box with its origin and size adjusted by the given parameters.
+   * Returns a copy of this with its origin offset by v.
    */
-  def +(adjOrigin: Vector3dD = Vector3dD.ZERO,
-        adjSize: Size3dD = Size3dD.ZERO) = Box(origin + adjOrigin, size + adjSize)
+  def movedBy(v: Vector3dD) = copy(origin = origin + v)
+
+
+  /**
+   * Returns a copy of this with s added to its size.
+   */
+  def expandedBy(s: Size3dD) = copy(size = size + s)
 
 
   /**

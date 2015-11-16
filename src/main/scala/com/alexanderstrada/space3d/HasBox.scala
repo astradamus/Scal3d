@@ -13,7 +13,7 @@ trait HasBox {
   /**
    * Returns a copy of this object with its box's origin adjusted by the given vector.
    */
-  def movedBy(v: Vector3dD): Self = this.withBox(box + v)
+  def movedBy(v: Vector3dD): Self = this.withBox(box movedBy v)
 
 
   /**
