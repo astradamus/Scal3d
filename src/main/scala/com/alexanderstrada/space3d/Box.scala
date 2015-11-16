@@ -111,8 +111,7 @@ case class Box(origin: Point3dD = Point3dD.ZERO,
   }
 
   /**
-   * Returns a new box with the same size as this one, but centered on (or in, if larger than) the
-   * given container.
+   * Returns a copy of this box centered in/on the given container.
    */
   def centeredIn(container: Box) = Box(container.center - this.size/2, this.size)
 
