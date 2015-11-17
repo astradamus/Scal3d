@@ -36,6 +36,9 @@ object SimpleOrthographic {
     def toFaces(r: BoxDrawable): Set[Face] = {
       val size = camera.project(r.box.size)
 
+      val sortOrigin = r.box.vertex(LEFT, BACK, TOP)
+      val sortDepth = sortOrigin.y + (sortOrigin.z * sortDepthZFactor)
+
       def makeFace(worldOrigin: Point3dD,
                    height: Double,
                    outline: Option[Color],
@@ -49,11 +52,7 @@ object SimpleOrthographic {
                     -(camera.screen.x, camera.screen.y) // Adjust for camera position.
                     + (y = camera.depthCompensation)) // Adjust for depth projection.
 
-        val sortDepth = (worldOrigin.y
-                         + (worldOrigin.z * sortDepthZFactor)
-                         + sortDepthAdjustment)
-
-        Face(rect, sortDepth, outline, fill, image)
+        Face(rect, sortDepth + sortDepthAdjustment, outline, fill, image)
       }
 
       val topFace = makeFace(worldOrigin = r.box.vertex(LEFT, BACK, TOP),
