@@ -9,9 +9,15 @@ import com.alexanderstrada.space3d.tuple3d.Tuple3dD.Vector3dD
  *
  * @param box The position/size of this entity.
  * @param speed Defined in millimeters per square millisecond.
+ * @param solidWeight Optionally defines solidity and weight (all solids must have a weight). Solids
+ *                    do not like to share space with other solids, and will repel each other when
+ *                    they intersect. The force of repulsion is unequal for solids of unequal
+ *                    weights: lighter solids receive more of the force, while heavier receive less.
+ *                    Behavior is undefined for weights <= 0.
  */
 case class BoxPhysical(box: Box,
-                       speed: Vector3dD)
+                       speed: Vector3dD,
+                       solidWeight: Option[Double] = None)
 
   extends HasBox {
 
