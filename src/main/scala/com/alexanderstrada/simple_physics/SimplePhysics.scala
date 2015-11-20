@@ -1,5 +1,6 @@
 package com.alexanderstrada.simple_physics
 
+import com.alexanderstrada.simple_physics.BoxPhysical._
 import com.alexanderstrada.space3d.Box
 import com.alexanderstrada.space3d.tuple3d.{Tuple3dD, Vector3dD}
 
@@ -12,6 +13,25 @@ object SimplePhysics {
   val gravityInMmPerMs2 = Vector3dD(z = -0.0098)
   val frictionAsFractionOfSpeedLostPerMs = 0.003
   val minimumSpeedPerAxisInMs2 = 0.05
+
+
+  /**
+   * Returns a copy of p with its speed negated on each axis upon which its box differs from
+   * oldPosition. Used when positions are corrected during collision with world bounds or block
+   * solids--colliding with either of these causes physicals to lose their speed on the axis of
+   * collision.
+   */
+  def negateSpeedOnChangedAxes(p: BoxPhysical, oldPosition: Box): BoxPhysical = {
+
+    val haltingVector = p.speed.map((axis, speedOnAxis) => {
+      if (oldPosition.origin(axis) != p.box.origin(axis))
+        speedOnAxis
+      else
+        0.0
+    })
+
+    p.deceleratedBy(haltingVector)
+  }
 
 
   /**
@@ -45,18 +65,13 @@ object SimplePhysics {
    * on that axis will be negated 'by the impact.'
    */
   def bind(p: BoxPhysical, bounds: Box): BoxPhysical = {
+
     val boxBeforeBind = p.box
     val boxAfterBind = boxBeforeBind.boundTo(bounds)
 
-    val haltingVector = p.speed.map((axis, speedOnAxis) => {
-      if (boxBeforeBind.origin(axis) != boxAfterBind.origin(axis))
-        speedOnAxis
-      else
-        0.0
-    })
+    val pWithBoundBox = p.withBox(boxAfterBind)
 
-    p.withBox(boxAfterBind)
-     .deceleratedBy(haltingVector)
+    negateSpeedOnChangedAxes(pWithBoundBox, boxBeforeBind)
   }
 
 
@@ -126,8 +141,10 @@ object SimplePhysics {
 
     val compare = solid1.box.compareTo(solid2.box) / 1000 * deltaTimeInMs
 
-    val s1Weight = solid1.solidWeight.get
-    val s2Weight = solid2.solidWeight.get
+    val (s1Weight, s2Weight) = (solid1.solidity, solid2.solidity) match {
+      case (Some(s1: MobileSolid), Some(s2: MobileSolid)) => (s1.weight, s2.weight)
+      case _ => throw new IllegalArgumentException
+    }
 
     val weights = s1Weight + s2Weight
     val ratios = (s2Weight / weights,
@@ -145,6 +162,24 @@ object SimplePhysics {
 
 
   /**
+   * Returns a copy of mobileSolid moved the least possible amount so that it intersects blockSolid
+   * inclusively, but NOT exclusively (i.e. they are only intersecting at surface--they are
+   * 'touching'). The copy's speed will be negated on the axis upon which it is displaced.
+   */
+  def applySolidObstruction(mobileSolid: BoxPhysical, blockSolid: BoxPhysical) = {
+
+    val compare = mobileSolid.box.compareTo(blockSolid.box)
+    val vector = Tuple3dD(Map(compare.absoluteLowest))
+
+    val boxBeforeObstruct = mobileSolid.box
+    val boxAfterObstruct = boxBeforeObstruct movedBy vector
+
+    negateSpeedOnChangedAxes(mobileSolid.withBox(boxAfterObstruct),
+                             boxBeforeObstruct)
+  }
+
+
+  /**
    * Returns a set containing all colliding pairs in the given sequence, defined in terms of each
    * BoxPhysical's index within the sequence. Two BoxPhysicals are colliding if they are both solid
    * and they exclusively intersect.
@@ -152,7 +187,7 @@ object SimplePhysics {
   def evaluateCollisions(inPhysicals: Seq[BoxPhysical]): Set[(Int, Int)] = {
     val empty = Set.empty[(Int, Int)]
 
-    val solidPhysicals = inPhysicals filter (_.solidWeight.isDefined)
+    val solidPhysicals = inPhysicals filter (_.solidity.isDefined)
 
     solidPhysicals.foldLeft(empty)((allIntersections, thisPhysical) => {
 
@@ -189,13 +224,31 @@ object SimplePhysics {
       val solid1Index = collision._1
       val solid2Index = collision._2
 
-      val (solid1, solid2) = applySolidRepulsion(deltaTimeInMs,
-                                                 outPhysicals(solid1Index),
-                                                 outPhysicals(solid2Index))
+      val inSolid1 = outPhysicals(collision._1)
+      val inSolid2 = outPhysicals(collision._2)
+
+      val (outSolid1, outSolid2) = (inSolid1.solidity.get, inSolid2.solidity.get) match {
+
+        // Blocks ignore each other.
+        case (s1, s2) if s1 == BlockSolid && s2 == BlockSolid =>
+          (inSolid1, inSolid2)
+
+        // Mobiles repel each other.
+        case (s1, s2) if s1 != BlockSolid && s2 != BlockSolid =>
+          applySolidRepulsion(deltaTimeInMs, inSolid1, inSolid2)
+
+        // Blocks obstruct mobiles.
+        case (s1, s2) if s1 == BlockSolid =>
+          (inSolid1, applySolidObstruction(inSolid2, inSolid1))
+
+        // Blocks obstruct mobiles.
+        case (s1, s2) if s2 == BlockSolid =>
+          (applySolidObstruction(inSolid1, inSolid2), inSolid2)
+      }
 
       outPhysicals
-        .updated(solid1Index, solid1)
-        .updated(solid2Index, solid2)
+        .updated(solid1Index, outSolid1)
+        .updated(solid2Index, outSolid2)
     })
   }
 
