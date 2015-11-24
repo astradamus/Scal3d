@@ -28,17 +28,23 @@ case class BoxPhysical(box: Box,
 
 
   /**
+   * Returns a copy of this with its speed replaced by the one given.
+   */
+  def withSpeed(s: Vector3dD): BoxPhysical = if (s != speed) copy(speed = s) else this
+
+
+  /**
    * Returns a copy of this with the given vector added to its speed.
    * @param v Defined in millimeters per millisecond.
    */
-  def acceleratedBy(v: Vector3dD) = if (v != Vector3dD.ZERO) copy(speed = speed + v) else this
+  def acceleratedBy(v: Vector3dD) = if (v != Vector3dD.ZERO) withSpeed(speed + v) else this
 
 
   /**
    * Returns a copy of this with the given vector subtracted from its speed.
    * @param v Defined in millimeters per millisecond.
    */
-  def deceleratedBy(v: Vector3dD) = if (v != Vector3dD.ZERO) copy(speed = speed - v) else this
+  def deceleratedBy(v: Vector3dD) = if (v != Vector3dD.ZERO) withSpeed(speed - v) else this
 }
 
 object BoxPhysical {
