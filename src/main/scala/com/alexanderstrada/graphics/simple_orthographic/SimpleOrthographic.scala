@@ -43,10 +43,8 @@ object SimpleOrthographic {
 
   def apply(d: BoxDrawable, cam: OrthographicCamera) = {
 
-    val sortDepthZFactor = 0.1
-
     val sortOrigin = d.box.vertex(LEFT, BACK, TOP)
-    val sortDepth = sortOrigin.y + (sortOrigin.z * sortDepthZFactor)
+    val sortDepth = sortOrigin.y + sortOrigin.z
 
     val projectedSize = cam.project(d.box.size)
 
@@ -56,9 +54,7 @@ object SimpleOrthographic {
                            outline = d.outline,
                            fill = d.fill,
                            image = d.topImage,
-                           sortDepth = sortDepth + 0.00001, // Top faces receive priority over front
-                                                            // at same depth, prevents Z-fighting
-                                                            // between faces of Y-adjacent boxes.
+                           sortDepth = sortDepth,
                            cam = cam)
 
     val frontFace = makeFace(projectedOrigin = cam.project(d.box.vertex(LEFT, FRONT, TOP)),
