@@ -35,6 +35,14 @@ object SimplePhysics {
 
 
   /**
+   * Returns applyGravity(p, deltaTimeInMs), as long as p.ignoresGravity is false. Returns p
+   * unchanged otherwise.
+   */
+  def maybeApplyGravity(p: BoxPhysical, deltaTimeInMs: Long) =
+    if (p.ignoresGravity) p else applyGravity(p, deltaTimeInMs)
+
+
+  /**
    * Returns a copy of p accelerated by gravity as defined by gravityInMmPerMs2.
    */
   def applyGravity(p: BoxPhysical, deltaTimeInMs: Long) =
@@ -76,6 +84,14 @@ object SimplePhysics {
 
 
   /**
+    * Returns applyFriction(p, deltaTimeInMs), as long as p.ignoresFriction is false. Returns p
+    * unchanged otherwise.
+    */
+  def maybeApplyFriction(p: BoxPhysical, deltaTimeInMs: Long) =
+    if (p.ignoresFriction) p else applyFriction(p, deltaTimeInMs)
+
+
+  /**
    * Returns a copy of p with its speed reduced according to friction as defined by
    * frictionAsFractionOfSpeedLostPerMs.
    */
@@ -113,10 +129,10 @@ object SimplePhysics {
 
       var out = in
 
-      out = applyGravity(out, deltaTimeInMs)
+      out = maybeApplyGravity(out, deltaTimeInMs)
       out = applySpeed(out, deltaTimeInMs)
       out = maybeBind(out, worldBounds)
-      out = applyFriction(out, deltaTimeInMs)
+      out = maybeApplyFriction(out, deltaTimeInMs)
       out = enforceMinimumSpeed(out)
 
       out

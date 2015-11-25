@@ -16,7 +16,9 @@ import com.alexanderstrada.space3d.{Box, HasBox}
  */
 case class BoxPhysical(box: Box,
                        speed: Vector3dD,
-                       solidity: Option[Solidity] = None) extends HasBox {
+                       solidity: Option[Solidity] = None,
+                       ignoresGravity: Boolean = false,
+                       ignoresFriction: Boolean = false) extends HasBox {
 
   type Self = BoxPhysical
 
