@@ -29,11 +29,11 @@ object SimpleOrthographic {
   private val sortDepthZFactor = 0.1
 
 
-  def apply(camera: OrthographicCamera, zoneDrawables: Set[BoxDrawable]): Set[Face] = {
+  def apply(camera: OrthographicCamera, zoneDrawables: Seq[BoxDrawable]): Seq[Face] = {
 
     implicit def toInt(d: Double): Int = d.round.asInstanceOf[Int]
 
-    def toFaces(r: BoxDrawable): Set[Face] = {
+    def toFaces(r: BoxDrawable): Seq[Face] = {
       val size = camera.project(r.box.size)
 
       val sortOrigin = r.box.vertex(LEFT, BACK, TOP)
@@ -68,7 +68,7 @@ object SimpleOrthographic {
                                fill = r.fill map (_.darker.darker),
                                image = r.frontImage)
 
-      Set(topFace, frontFace)
+      Seq(topFace, frontFace)
     }
 
     zoneDrawables flatMap toFaces

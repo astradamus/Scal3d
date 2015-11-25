@@ -1,11 +1,11 @@
 package com.alexanderstrada.graphics.face_renderer
 
 /**
- * Sorts a set of faces by their sort depth and then renders them from back to front.
+ * Sorts a seq of faces by their sort depth and then renders them from back to front.
  */
 object FaceRenderer {
 
-  def apply(canvas: FaceCanvas, faces: Set[Face]): Unit = faces
+  def apply(canvas: FaceCanvas, faces: Seq[Face]): Unit = faces
                                                             .toSeq
                                                             .sortBy(_.sortDepth)
                                                             .foreach(f => renderFace(canvas, f))
