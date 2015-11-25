@@ -22,7 +22,7 @@ object SimpleOrthographic {
                outline: Option[Color],
                fill: Option[Color],
                image: Option[Image],
-               sortDepth: Double = 0.0,
+               sortDepthAdjust: Double = 0.0,
                cam: OrthographicCamera): Face = {
 
 
@@ -37,14 +37,13 @@ object SimpleOrthographic {
 
     val compensatedForProjection = adjustedForCamPosition + (y = cam.depthCompensation)
 
+    val sortDepth = projectedOrigin.y + projectedOrigin.z + sortDepthAdjust
+
     Face(compensatedForProjection, sortDepth, outline, fill, image)
   }
 
 
   def apply(d: BoxDrawable, cam: OrthographicCamera) = {
-
-    val sortOrigin = d.box.vertex(LEFT, BACK, TOP)
-    val sortDepth = sortOrigin.y + sortOrigin.z
 
     val projectedSize = cam.project(d.box.size)
 
@@ -54,7 +53,6 @@ object SimpleOrthographic {
                            outline = d.outline,
                            fill = d.fill,
                            image = d.topImage,
-                           sortDepth = sortDepth,
                            cam = cam)
 
     val frontFace = makeFace(projectedOrigin = cam.project(d.box.vertex(LEFT, FRONT, TOP)),
@@ -63,7 +61,7 @@ object SimpleOrthographic {
                              outline = d.outline map (_.darker.darker.darker),
                              fill = d.fill map (_.darker.darker),
                              image = d.frontImage,
-                             sortDepth = sortDepth + projectedSize.y,
+                             sortDepthAdjust = -projectedSize.z / 2,
                              cam = cam)
 
     Seq(topFace, frontFace)
