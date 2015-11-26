@@ -4,6 +4,7 @@ import java.awt.{Color, Image}
 
 import com.alexanderstrada.graphics.Rectangle
 import com.alexanderstrada.graphics.face_renderer.Face
+import com.alexanderstrada.space3d.Axis
 import com.alexanderstrada.space3d.Side._
 import com.alexanderstrada.space3d.tuple3d.Tuple3dD.Point3dD
 
@@ -40,6 +41,33 @@ object SimpleOrthographic {
     val sortDepth = projectedOrigin.y + projectedOrigin.z + sortDepthAdjust
 
     Face(compensatedForProjection, sortDepth, outline, fill, image)
+  }
+
+
+  def apply(p: PlaneDrawable, cam: OrthographicCamera): Option[Face] = {
+
+    val perpendicularTo = p.plane.perpendicularTo
+
+    if (perpendicularTo == Axis.X) {
+      None
+    }
+    else {
+
+      val projectedSize = cam.project(p.plane.size)
+
+      val height = projectedSize(perpendicularTo match {
+                                   case Axis.Y => Axis.Z
+                                   case Axis.Z => Axis.Y
+                                 })
+
+      Option(makeFace(projectedOrigin = cam.project(p.plane.origin),
+                      width = projectedSize.x,
+                      height = height,
+                      outline = p.outline,
+                      fill = p.fill,
+                      image = p.image,
+                      cam = cam))
+    }
   }
 
 
