@@ -17,7 +17,7 @@ import com.alexanderstrada.space3d.tuple3d.Tuple3dD.Point3dD
 object SimpleOrthographic {
 
 
-  def makeFace(projectedOrigin: Point3dD,
+  def makeFace(origin: Point3dD,
                width: Double,
                height: Double,
                outline: Option[Color],
@@ -26,6 +26,7 @@ object SimpleOrthographic {
                sortDepthAdjust: Double = 0.0,
                cam: OrthographicCamera): Face = {
 
+    val projectedOrigin = cam.project(origin)
 
     implicit def toInt(d: Double): Int = d.round.asInstanceOf[Int]
 
@@ -38,7 +39,7 @@ object SimpleOrthographic {
 
     val compensatedForProjection = adjustedForCamPosition + (y = cam.depthCompensation)
 
-    val sortDepth = projectedOrigin.y + projectedOrigin.z + sortDepthAdjust
+    val sortDepth = origin.y + origin.z + sortDepthAdjust
 
     Face(compensatedForProjection, sortDepth, fill, outline, image)
   }
@@ -60,7 +61,7 @@ object SimpleOrthographic {
                                    case Axis.Z => Axis.Y
                                  })
 
-      Option(makeFace(projectedOrigin = cam.project(p.plane.origin),
+      Option(makeFace(origin = p.plane.origin,
                       width = projectedSize.x,
                       height = height,
                       outline = p.outline,
@@ -75,7 +76,7 @@ object SimpleOrthographic {
 
     val projectedSize = cam.project(d.box.size)
 
-    val topFace = makeFace(projectedOrigin = cam.project(d.box.vertex(LEFT, BACK, TOP)),
+    val topFace = makeFace(origin = d.box.vertex(LEFT, BACK, TOP),
                            width = projectedSize.x,
                            height = projectedSize.y,
                            outline = d.outline,
@@ -83,7 +84,7 @@ object SimpleOrthographic {
                            image = d.topImage,
                            cam = cam)
 
-    val frontFace = makeFace(projectedOrigin = cam.project(d.box.vertex(LEFT, FRONT, TOP)),
+    val frontFace = makeFace(origin = d.box.vertex(LEFT, FRONT, TOP),
                              width = projectedSize.x,
                              height = projectedSize.z,
                              outline = d.outline map (_.darker.darker.darker),
