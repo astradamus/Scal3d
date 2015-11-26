@@ -40,7 +40,7 @@ object SimpleOrthographic {
 
     val sortDepth = projectedOrigin.y + projectedOrigin.z + sortDepthAdjust
 
-    Face(compensatedForProjection, sortDepth, outline, fill, image)
+    Face(compensatedForProjection, sortDepth, fill, outline, image)
   }
 
 
