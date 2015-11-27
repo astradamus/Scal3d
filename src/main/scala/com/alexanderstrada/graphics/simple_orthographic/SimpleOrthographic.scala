@@ -88,7 +88,7 @@ object SimpleOrthographic {
                              width = projectedSize.x,
                              height = projectedSize.z,
                              outline = d.outline map (_.darker.darker.darker),
-                             fill = d.fill map (_.darker.darker),
+                             fill = d.fill map (_.darker),
                              image = d.frontImage,
                              sortDepthAdjust = -projectedSize.z / 2,
                              cam = cam)
