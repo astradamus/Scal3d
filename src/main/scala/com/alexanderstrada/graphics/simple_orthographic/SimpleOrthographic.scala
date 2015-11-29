@@ -90,7 +90,7 @@ object SimpleOrthographic {
                              outline = d.outline map (_.darker.darker.darker),
                              fill = d.fill map (_.darker),
                              image = d.frontImage,
-                             sortDepthAdjust = -projectedSize.z / 2,
+                             sortDepthAdjust = -d.box.size.z / 2,
                              cam = cam)
 
     Seq(topFace, frontFace)
