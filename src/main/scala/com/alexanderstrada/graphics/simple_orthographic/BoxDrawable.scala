@@ -8,17 +8,10 @@ import com.alexanderstrada.space3d.{HasBox, Box}
  * Defines a box that can be interpreted by SimpleOrthographic and then drawn by FaceRenderer.
  *
  * @param box The shape to be interpreted.
- * @param outline An optional color for the box's edges.
- * @param fill An optional color for the box's faces.
- * @param topImage An optional image for the box's top face.
- * @param frontImage An optional image for the box's front face.
+ * @param drawable The visual details of the shape.
  */
 case class BoxDrawable(box: Box = Box.ZERO,
-                       outline: Option[Color] = None,
-                       fill: Option[Color] = None,
-                       topImage: Option[Image] = None,
-                       frontImage: Option[Image] = None)
-  extends HasBox {
+                       drawable: Drawable) extends HasBox {
 
   type Self = BoxDrawable
 

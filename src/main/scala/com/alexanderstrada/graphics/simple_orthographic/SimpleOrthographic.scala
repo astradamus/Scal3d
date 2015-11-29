@@ -55,42 +55,44 @@ object SimpleOrthographic {
     else {
 
       val projectedSize = cam.project(p.plane.size)
+      val d = p.drawable
 
-      val height = projectedSize(perpendicularTo match {
-                                   case Axis.Y => Axis.Z
-                                   case Axis.Z => Axis.Y
-                                 })
+      val (height, outline, fill, image) = perpendicularTo match {
+        case Axis.Y => (projectedSize(Axis.Z), d.topOutline, d.topFill, d.topImage)
+        case Axis.Z => (projectedSize(Axis.Y), d.frontOutline, d.frontFill, d.frontImage)
+      }
 
       Option(makeFace(origin = p.plane.origin,
                       width = projectedSize.x,
                       height = height,
-                      outline = p.outline,
-                      fill = p.fill,
-                      image = p.image,
+                      outline = outline,
+                      fill = fill,
+                      image = image,
                       cam = cam))
     }
   }
 
 
-  def apply(d: BoxDrawable, cam: OrthographicCamera) = {
+  def apply(b: BoxDrawable, cam: OrthographicCamera) = {
 
-    val projectedSize = cam.project(d.box.size)
+    val projectedSize = cam.project(b.box.size)
+    val d = b.drawable
 
-    val topFace = makeFace(origin = d.box.vertex(LEFT, BACK, TOP),
+    val topFace = makeFace(origin = b.box.vertex(LEFT, BACK, TOP),
                            width = projectedSize.x,
                            height = projectedSize.y,
-                           outline = d.outline,
-                           fill = d.fill,
+                           outline = d.topOutline,
+                           fill = d.topFill,
                            image = d.topImage,
                            cam = cam)
 
-    val frontFace = makeFace(origin = d.box.vertex(LEFT, FRONT, TOP),
+    val frontFace = makeFace(origin = b.box.vertex(LEFT, FRONT, TOP),
                              width = projectedSize.x,
                              height = projectedSize.z,
-                             outline = d.outline map (_.darker.darker.darker),
-                             fill = d.fill map (_.darker),
+                             outline = d.frontOutline,
+                             fill = d.frontFill,
                              image = d.frontImage,
-                             sortDepthAdjust = -d.box.size.z / 2,
+                             sortDepthAdjust = -b.box.size.z / 2,
                              cam = cam)
 
     Seq(topFace, frontFace)
